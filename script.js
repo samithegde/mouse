@@ -2,7 +2,6 @@ let locked = true
 history.pushState(null, "", location.href)
 
 onpopstate = () => locked && history.pushState(null, "", location.href)
-
 addEventListener("keydown", e => e.key === "Escape" && (locked = false))
 
 let clicks = 0
@@ -50,8 +49,7 @@ document.getElementById("cps").addEventListener("mousedown", e => {
   start ??= performance.now()
   clicks++
   total++
-  let cps = clicks / ((performance.now() - start) / 1000)
-  cpsValue.textContent = cps.toFixed(2) + " CPS"
+  cpsValue.textContent = (clicks / ((performance.now() - start) / 1000)).toFixed(2) + " CPS"
   totalClicks.textContent = total + " clicks"
   firework(e.clientX, e.clientY)
 })
@@ -62,10 +60,12 @@ const scrollValue = document.getElementById("scrollValue")
 const scrollBox = document.getElementById("scrollBox")
 const scrollContent = document.getElementById("scrollContent")
 
-scrollBox.scrollTop = scrollContent.offsetHeight / 2
-lastScroll = scrollBox.scrollTop
+requestAnimationFrame(() => {
+  scrollBox.scrollTop = scrollContent.offsetHeight / 2
+  lastScroll = scrollBox.scrollTop
+})
 
-scrollBox.addEventListener("scroll", e => {
+scrollBox.addEventListener("scroll", () => {
   let now = performance.now()
   let top = scrollBox.scrollTop
   let max = scrollContent.offsetHeight - scrollBox.clientHeight
@@ -89,4 +89,3 @@ scrollBox.addEventListener("scroll", e => {
   lastScroll = top
   lastTime = now
 })
-
