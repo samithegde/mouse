@@ -1,8 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
 html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  font-family: Arial, sans-serif;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+#fx {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
 }
 
 #container {
@@ -14,33 +22,34 @@ html, body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  user-select: none;
 }
 
 #cps {
-  background: #111;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
   color: white;
   cursor: pointer;
 }
 
 #scroll {
-  background: #eaeaea;
+  background: #f4f4f4;
   overflow-y: scroll;
 }
 
-#scroll::after {
-  content: "";
-  display: block;
-  height: 4000px;
-}
-
-#cpsText, #scrollText {
-  font-size: 24px;
+.label {
+  margin-top: 20px;
+  font-size: 20px;
+  opacity: 0.8;
 }
 
 #cpsValue, #scrollValue {
-  font-size: 40px;
-  margin-top: 10px;
+  font-size: 42px;
+  font-weight: 600;
+  margin: 10px 0 30px 0;
+}
+
+#scrollContent {
+  height: 6000px;
+  width: 100%;
 }
