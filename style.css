@@ -1,0 +1,46 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+#container {
+  display: flex;
+  height: 100%;
+}
+
+#cps, #scroll {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+#cps {
+  background: #111;
+  color: white;
+  cursor: pointer;
+}
+
+#scroll {
+  background: #eaeaea;
+  overflow-y: scroll;
+}
+
+#scroll::after {
+  content: "";
+  display: block;
+  height: 4000px;
+}
+
+#cpsText, #scrollText {
+  font-size: 24px;
+}
+
+#cpsValue, #scrollValue {
+  font-size: 40px;
+  margin-top: 10px;
+}
