@@ -6,8 +6,11 @@ onpopstate = () => locked && history.pushState(null, "", location.href)
 addEventListener("keydown", e => e.key === "Escape" && (locked = false))
 
 let clicks = 0
+let total = 0
 let start = null
+
 const cpsValue = document.getElementById("cpsValue")
+const totalClicks = document.getElementById("totalClicks")
 
 const canvas = document.getElementById("fx")
 const ctx = canvas.getContext("2d")
@@ -46,19 +49,44 @@ animate()
 document.getElementById("cps").addEventListener("mousedown", e => {
   start ??= performance.now()
   clicks++
-  cpsValue.textContent = ((clicks) / ((performance.now() - start) / 1000)).toFixed(2) + " CPS"
+  total++
+  let cps = clicks / ((performance.now() - start) / 1000)
+  cpsValue.textContent = cps.toFixed(2) + " CPS"
+  totalClicks.textContent = total + " clicks"
   firework(e.clientX, e.clientY)
 })
 
 let lastScroll = 0
 let lastTime = performance.now()
 const scrollValue = document.getElementById("scrollValue")
+const scrollBox = document.getElementById("scrollBox")
+const scrollContent = document.getElementById("scrollContent")
 
-document.getElementById("scroll").addEventListener("scroll", e => {
+scrollBox.scrollTop = scrollContent.offsetHeight / 2
+lastScroll = scrollBox.scrollTop
+
+scrollBox.addEventListener("scroll", e => {
   let now = performance.now()
-  let delta = Math.abs(e.target.scrollTop - lastScroll)
+  let top = scrollBox.scrollTop
+  let max = scrollContent.offsetHeight - scrollBox.clientHeight
+
+  if (top < max * 0.25) {
+    scrollBox.scrollTop = top + max * 0.5
+    lastScroll = scrollBox.scrollTop
+    return
+  }
+
+  if (top > max * 0.75) {
+    scrollBox.scrollTop = top - max * 0.5
+    lastScroll = scrollBox.scrollTop
+    return
+  }
+
+  let delta = Math.abs(top - lastScroll)
   let speed = delta / ((now - lastTime) / 1000)
+
   scrollValue.textContent = Math.round(speed) + " px/s"
-  lastScroll = e.target.scrollTop
+  lastScroll = top
   lastTime = now
 })
+
