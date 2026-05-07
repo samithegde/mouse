@@ -89,3 +89,34 @@ scrollBox.addEventListener("scroll", () => {
   lastScroll = top
   lastTime = now
 })
+
+// Dropdown menu toggle
+document.getElementById("creatorBtn").addEventListener("click", () => {
+  const dropdown = document.getElementById("dropdown");
+  dropdown.classList.toggle("opacity-0");
+  dropdown.classList.toggle("invisible");
+  dropdown.classList.toggle("translate-y-2");
+});
+
+// Close dropdown when clicking outside
+document.addEventListener("click", (e) => {
+  const btn = document.getElementById("creatorBtn");
+  const dropdown = document.getElementById("dropdown");
+  if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.add("opacity-0");
+    dropdown.classList.add("invisible");
+    dropdown.classList.add("translate-y-2");
+  }
+});
+
+// Splash screen fade out
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash');
+    splash.style.transition = 'opacity 1s';
+    splash.style.opacity = '0';
+    setTimeout(() => {
+      splash.style.display = 'none';
+    }, 1000);
+  }, 2000);
+});
