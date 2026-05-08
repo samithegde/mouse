@@ -1,7 +1,52 @@
 let locked = true
-history.pushState(null, "", location.href)
+let ignoreHistoryMove = false
 
-onpopstate = () => locked && history.pushState(null, "", location.href)
+function lockHistory() {
+  if (history.state?.mouseTrap === "center") return
+
+  ignoreHistoryMove = true
+  history.replaceState({ mouseTrap: "backstop" }, "", location.href)
+  history.pushState({ mouseTrap: "center" }, "", location.href)
+  history.pushState({ mouseTrap: "forwardstop" }, "", location.href)
+  history.back()
+
+  setTimeout(() => {
+    ignoreHistoryMove = false
+  }, 80)
+}
+
+function pulseHistoryWave(direction) {
+  const x = direction === "back" ? innerWidth * 0.22 : innerWidth * 0.78
+  wave(x, innerHeight * 0.5, direction)
+}
+
+lockHistory()
+
+addEventListener("popstate", e => {
+  if (!locked || ignoreHistoryMove) return
+
+  if (!e.state?.mouseTrap) {
+    lockHistory()
+    return
+  }
+
+  if (e.state.mouseTrap === "center") return
+
+  const direction = e.state.mouseTrap === "forwardstop" ? "forward" : "back"
+  pulseHistoryWave(direction)
+  ignoreHistoryMove = true
+
+  if (direction === "back") {
+    history.forward()
+  } else {
+    history.back()
+  }
+
+  setTimeout(() => {
+    ignoreHistoryMove = false
+  }, 80)
+})
+
 addEventListener("keydown", e => e.key === "Escape" && (locked = false))
 
 const cps = document.getElementById("cps")
@@ -21,6 +66,7 @@ const resetScroll = document.getElementById("resetScroll")
 const canvas = document.getElementById("fx")
 const ctx = canvas.getContext("2d")
 let particles = []
+let waves = []
 
 function resize() {
   canvas.width = innerWidth
@@ -37,8 +83,52 @@ function firework(x, y) {
   }
 }
 
+function wave(x, y, direction) {
+  const isBack = direction === "back"
+  waves.push({
+    x,
+    y,
+    direction: isBack ? -1 : 1,
+    hue: isBack ? 195 : 285,
+    life: 46,
+    maxLife: 46
+  })
+}
+
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  waves = waves.filter(w => w.life-- > 0)
+  for (let w of waves) {
+    const progress = 1 - w.life / w.maxLife
+    const alpha = 1 - progress
+
+    ctx.save()
+    ctx.globalCompositeOperation = "lighter"
+    ctx.lineCap = "round"
+
+    for (let i = 0; i < 4; i++) {
+      const radius = progress * 260 + i * 34
+      ctx.strokeStyle = `hsla(${w.hue + i * 18}, 95%, 62%, ${alpha * (0.45 - i * 0.07)})`
+      ctx.lineWidth = 8 - i
+      ctx.beginPath()
+      ctx.arc(w.x, w.y, radius, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+
+    ctx.strokeStyle = `hsla(${w.hue + 40}, 100%, 70%, ${alpha * 0.6})`
+    ctx.lineWidth = 5
+    ctx.beginPath()
+    ctx.moveTo(w.x, w.y)
+    for (let i = 0; i < 9; i++) {
+      const distance = i * 52 * w.direction
+      const lift = Math.sin(progress * Math.PI * 3 + i) * 26 * alpha
+      ctx.lineTo(w.x + distance, w.y + lift)
+    }
+    ctx.stroke()
+    ctx.restore()
+  }
+
   particles = particles.filter(p => p.life-- > 0)
   for (let p of particles) {
     p.x += p.vx
@@ -51,6 +141,26 @@ function animate() {
   requestAnimationFrame(animate)
 }
 animate()
+
+let lastSideButtonEvent = { button: -1, time: 0 }
+
+function showSideButtonWave(e) {
+  if (e.button !== 3 && e.button !== 4) return
+
+  e.preventDefault()
+  e.stopPropagation()
+
+  const now = performance.now()
+  if (lastSideButtonEvent.button === e.button && now - lastSideButtonEvent.time < 80) return
+  lastSideButtonEvent = { button: e.button, time: now }
+
+  wave(e.clientX, e.clientY, e.button === 3 ? "back" : "forward")
+}
+
+addEventListener("pointerdown", showSideButtonWave, true)
+addEventListener("mousedown", showSideButtonWave, true)
+addEventListener("mouseup", showSideButtonWave, true)
+addEventListener("auxclick", showSideButtonWave, true)
 
 function getSeconds(input) {
   const seconds = Number(input.value)
@@ -135,6 +245,7 @@ function resetCpsTest() {
 }
 
 cps.addEventListener("mousedown", e => {
+  if (e.button !== 0) return
   if (e.target.closest("input, button")) return
   if (!cpsTest.begin()) return
 
