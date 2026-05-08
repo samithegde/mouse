@@ -1,8 +1,3 @@
-// fix cps test and scrolling measurements
-//maybe add a timer selection for each
-// more animations, maybe tailwind
-// transition into vite + ts ??
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,11 +15,23 @@
   <div id="container">
     <div id="cps">
       <div class="label">click anywhere</div>
+      <div class="timerControls">
+        <label for="cpsSeconds">seconds</label>
+        <input id="cpsSeconds" type="number" min="1" max="300" value="10">
+        <button id="resetCps" type="button">reset</button>
+      </div>
+      <div id="cpsTimer" class="timer">10.0s</div>
       <div id="cpsValue">0 CPS</div>
       <div id="totalClicks">0 clicks</div>
     </div>
     <div id="scroll">
       <div class="label">scroll test</div>
+      <div class="timerControls">
+        <label for="scrollSeconds">seconds</label>
+        <input id="scrollSeconds" type="number" min="1" max="300" value="10">
+        <button id="resetScroll" type="button">reset</button>
+      </div>
+      <div id="scrollTimer" class="timer">10.0s</div>
       <div id="scrollValue">0 px/s</div>
       <div id="scrollBox">
         <div id="scrollContent"></div>

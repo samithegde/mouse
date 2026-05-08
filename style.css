@@ -42,6 +42,48 @@ html, body {
   opacity: 0.8;
 }
 
+.timerControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.timerControls input {
+  width: 72px;
+  padding: 8px 10px;
+  border: 1px solid rgba(0,0,0,0.18);
+  border-radius: 8px;
+  font: inherit;
+}
+
+#cps .timerControls input {
+  color: #111;
+}
+
+.timerControls button {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.timerControls button:hover {
+  background: #1d4ed8;
+}
+
+.timer {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
 #cpsValue, #scrollValue {
   font-size: 42px;
   font-weight: 600;
